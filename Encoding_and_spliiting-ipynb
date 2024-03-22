@@ -1,0 +1,25 @@
+import numpy as np
+IMAGE_SIZE=(331,331)
+IMAGE_FULL_SIZE=(331,331,3)
+batchsize=8
+all_images=np.load("/content/temp/allDogsImages.npy")
+all_labels=np.load("/content/temp/allLabels.npy")
+# print(all_images.shape)
+# print(all_labels.shape)
+# print(all_labels)
+# print(len(all_labels))
+from sklearn.preprocessing import LabelEncoder #Converts text labels to integer labels for the model
+le=LabelEncoder()
+integer_labels=le.fit_transform(all_labels)
+numcat=len(np.unique(integer_labels))
+# print(numcat)
+from tensorflow.keras.utils import to_categorical #now convert integer labels to categorical labels to train the model
+all_labels_for_model=to_categorical(integer_labels,num_classes=numcat)
+# print(all_labels_for_model)
+all_images_for_model=all_images/255.0
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test=train_test_split(all_images_for_model,all_labels_for_model,test_size=0.3,random_state=42)
+del all_images
+del all_images_for_model
+del all_labels
+del integer_labels
